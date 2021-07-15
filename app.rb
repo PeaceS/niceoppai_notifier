@@ -25,7 +25,7 @@ FunctionsFramework.http :update_cartoon_list do |_request|
   object = find_by(object: object, type: 'class', value: 'wpm_pag mng_lts_chp grp')
   objects = loop_by(object: object, type: 'class', value: 'row')
 
-  data = objects.map do |obj|
+  objects = objects.map do |obj|
     object = find_by(object: obj, type: 'class', value: 'det')
     name_object = find_by_name(object: object, name: 'a')
     name = name_object.children[0].text.strip
@@ -37,20 +37,44 @@ FunctionsFramework.http :update_cartoon_list do |_request|
 
   firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/niceoppai-notifier-bea93adf3021.json'
 
-  puts "total of #{data.size} cartoons in the list"
-  data.each do |d|
-    doc = firestore.doc format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: d[0])
+  puts "total of #{objects.size} cartoons in the list"
+  created_list = []
+  updated_list = objects.map do |data|
+    doc = firestore.doc format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: data[0])
 
-    dd = {
-      link: d[1],
-      latest_chapter: d[2],
-      latest_link: d[3]
-    }
+    latest_chapter = firestore.transaction do |transaction|
+      transaction.get(doc).data&.[](:latest_chapter)
+    end
 
-    doc.set(dd, merge: true)
+    next if latest_chapter && latest_chapter == data[2].to_f
+
+    doc.set({
+      link: data[1],
+      latest_chapter: data[2],
+      latest_link: data[3]
+    }, merge: true)
+
+    unless latest_chapter
+      created_list << data[0]
+      nil
+    else
+      data[0]
+    end
+  end.compact
+
+  puts "created new #{created_list.size} cartoons, updated #{updated_list.size} cartoons"
+
+  unless updated_list.empty?
+    puts 'updated list:'
+    updated_list.each { |cartoon| puts cartoon }
   end
 
-  'created / updated'
+  unless created_list.empty?
+    puts 'created list:'
+    created_list.each { |cartoon| puts cartoon }
+  end
+
+  'ok'
 end
 
 def find_by(object:, type:, value:)
@@ -68,48 +92,3 @@ def loop_by(object:, type:, value:)
     data.attributes[type]&.value == value
   end
 end
-
-# FunctionsFramework.cloud_event :create_next_week_training_run do |event|
-#   require 'json'
-#   require 'active_support'
-#   require 'google/cloud/firestore'
-#   require 'active_support/core_ext/numeric/time.rb'
-#   require_relative 'model/google/calendar'
-#   require_relative 'lib/training_time'
-#   require_relative 'lib/next_counter'
-
-#   data = Base64.decode64 event.data['message']['data'] rescue '-'
-#   puts "data from pub: #{data}"
-#   check = JSON.parse(data)['training_run']['activate'] rescue false
-#   return 'Not running' unless check
-
-#   start_on_week = JSON.parse(data)['training_run']['start_on_week'].to_i rescue 1
-
-#   running_calendar = Google::Calendar.new(name: RUNNING_CALENDAR_NAME)
-#   latest_date, counter = running_calendar.latest_event(RUNNING_EVENT_NAME)
-#   counter = next_counter(counter, start_on_week)
-
-#   puts "Next tranning: week-#{counter} on #{latest_date.next_occurring(:tuesday)}"
-
-#   firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID
-
-#   collection = format('training/week-%<counter>d', counter: counter)
-#   training_ref = firestore.doc collection
-#   training_schedule = training_ref.get
-
-#   training_schedule.data.each do |day, data|
-#     start_time = Time.parse(data[:start_time] || '18:00')
-#     next_training_date = latest_date.next_occurring(day)
-#     next_training_date = DateTime.new(next_training_date.year, next_training_date.month, next_training_date.day, start_time.hour, start_time.min, 0, '+07:00')
-#     running_calendar.create(
-#       title: format('%<distance>.1f km %<event_name>s', distance: data[:distance], event_name: RUNNING_EVENT_NAME),
-#       start_time: next_training_date,
-#       end_time: next_training_date + training_time(data[:distance].to_f),
-#       note: format('%<event_name>s Week%<counter>d', event_name: RUNNING_EVENT_NAME, counter: counter)
-#     )
-#   end
-
-#   format('Created %<event>s schedule for week %<counter>d', event: RUNNING_EVENT_NAME, counter: counter)
-# end
-
-
