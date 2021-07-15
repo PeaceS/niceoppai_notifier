@@ -39,15 +39,18 @@ FunctionsFramework.http :update_cartoon_list do |_request|
 
   puts "total of #{objects.size} cartoons in the list"
   created_list = []
-  updated_list = objects.map do |data|
-    doc = firestore.doc format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: data[0])
 
-    latest_chapter = firestore.transaction do |transaction|
+  latest_chapters = firestore.transaction do |transaction|
+    objects.map do |data|
+      doc = firestore.doc format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: data[0])
       transaction.get(doc).data&.[](:latest_chapter)
     end
+  end
 
+  updated_list = objects.zip(latest_chapters).map do |data, latest_chapter|
     next if latest_chapter && latest_chapter == data[2].to_f
 
+    doc = firestore.doc(format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: data[0]))
     doc.set({
       link: data[1],
       latest_chapter: data[2],
