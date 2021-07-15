@@ -81,7 +81,7 @@ FunctionsFramework.http :update_cartoon_list do |_request|
     puts 'updated list:'
     updated_list.each { |cartoon| puts cartoon }
   else
-    puts "no updated cartoons"
+    puts 'no updated cartoons'
   end
 
   'ok'
