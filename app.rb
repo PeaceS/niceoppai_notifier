@@ -56,7 +56,7 @@ FunctionsFramework.http :update_cartoon_list do |_request|
 
   firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/niceoppai-notifier-bea93adf3021.json'
 
-  puts "total of #{cartoon_data.size} cartoons in the list"
+  logger.info "total of #{cartoon_data.size} cartoons in the list"
 
   latest_chapters = firestore.transaction do |transaction|
     cartoon_data.map do |data|
@@ -77,11 +77,11 @@ FunctionsFramework.http :update_cartoon_list do |_request|
   end.compact
 
   unless updated_list.empty?
-    puts "updated #{updated_list.size} cartoons"
-    puts 'updated list:'
-    updated_list.each { |cartoon| puts cartoon }
+    logger.info "updated #{updated_list.size} cartoons"
+    logger.info 'updated list:'
+    updated_list.each { |cartoon| logger.info cartoon }
   else
-    puts 'no updated cartoons'
+    logger.info 'no updated cartoons'
   end
 
   'ok'
