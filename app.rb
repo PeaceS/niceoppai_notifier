@@ -93,6 +93,28 @@ FunctionsFramework.http :update_cartoon_list do |_request|
   'ok'
 end
 
+FunctionsFramework.cloud_event :cartoon_update do |event|
+  require 'line-notify-client'
+  require 'google/cloud/firestore'
+
+  payload = event.data
+
+  old_chapter = payload['oldValue']['fields']['latest_chapter'].first.last
+  new_chapter = payload['value']['fields']['latest_chapter'].first.last
+
+  return unless old_chapter != new_chapter
+
+  cartoon_name = payload['value']['name'].split('/').last
+  logger.info "Update [#{cartoon_name}] from chapter #{old_chapter} to #{new_chapter}"
+
+  subscribers = payload['value']['fields']['subscribers']['arrayValue']['values'].map(&:values).flatten
+  subscribers.each do |subscriber|
+  end
+
+rescue NoMethodError => _
+  logger.info 'No subscribers list'
+end
+
 def find_by(object:, type:, value: nil)
   if value
     object.children.find { |data| data.attributes[type]&.value == value }
