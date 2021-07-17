@@ -69,7 +69,7 @@ FunctionsFramework.http :update_cartoon_list do |_request|
   end
 
   updated_list = cartoon_data.zip(latest_chapters).map do |data, latest_chapter|
-    next if latest_chapter && latest_chapter == data[2].to_f
+    next if latest_chapter && latest_chapter.to_f == data[2].to_f
 
     doc = firestore.doc(format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: data[0]))
     doc.set({
