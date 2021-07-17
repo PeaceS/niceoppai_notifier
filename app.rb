@@ -46,11 +46,14 @@ FunctionsFramework.http :update_cartoon_list do |_request|
       find_by(object: object, type: node.first[0], value: node.first[1])
     end
 
+    chapter = html_object.attributes['href'].value.split('/').last
+    chapter, lang = (Float chapter rescue chapter.split('-'))
     [
       name,
       name_object.attributes['href'].value,
-      html_object.attributes['href'].value.split('/').last.to_f,
-      html_object.attributes['href'].value
+      chapter,
+      html_object.attributes['href'].value,
+      lang
     ]
   end
 
@@ -72,8 +75,11 @@ FunctionsFramework.http :update_cartoon_list do |_request|
     doc.set({
       link: data[1],
       latest_chapter: data[2],
-      latest_link: data[3]
+      latest_link: data[3],
+      language: data[4] || 'TH'
     }, merge: true)
+
+    data[0]
   end.compact
 
   unless updated_list.empty?
