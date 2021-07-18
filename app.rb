@@ -2,6 +2,7 @@ require 'functions_framework'
 
 PROJECT_ID = 'niceoppai-notifier'.freeze
 CARTOON_LIST_COLLECTION = 'cartoons'.freeze
+ACCOUNT_LIST_COLLECTION = 'accounts'.freeze
 
 FunctionsFramework.http :update_cartoon_list do |_request|
   require 'httparty'
@@ -91,6 +92,42 @@ FunctionsFramework.http :update_cartoon_list do |_request|
   end
 
   'ok'
+end
+
+FunctionsFramework.cloud_event :cartoon_update do |event|
+  require 'line-notify-client'
+  require 'google/cloud/firestore'
+
+  payload = event.data
+
+  updated = payload['value']['fields']
+  new_chapter = updated['latest_chapter'].first.last
+  old_chapter = payload['oldValue']['fields']['latest_chapter'].first.last
+
+  return unless old_chapter != new_chapter
+
+  cartoon_name = payload['value']['name'].split('/').last
+  message = "[#{cartoon_name}] #{old_chapter} -> #{new_chapter}"
+  logger.info message
+
+  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/niceoppai-notifier-bea93adf3021.json'
+
+  subscribers = updated['subscribers']['arrayValue']['values'].map(&:values).flatten
+
+  subscriber_tokens = firestore.transaction do |transaction|
+    subscribers.map do |subscriber|
+      doc = firestore.doc(format('%<collection>s/%<id>s', collection: ACCOUNT_LIST_COLLECTION, id: subscriber))
+      transaction.get(doc).data&.[](:token)
+    end
+  end
+
+  message += ", link: #{updated['latest_link'].first.last}"
+  subscriber_tokens.each do |token|
+    Line::Notify::Client.message(token: token, message: message)
+  end
+
+rescue NoMethodError => _
+  logger.info 'No subscribers list'
 end
 
 def find_by(object:, type:, value: nil)
