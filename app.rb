@@ -4,7 +4,7 @@ PROJECT_ID = 'niceoppai-notifier'.freeze
 CARTOON_LIST_COLLECTION = 'cartoons'.freeze
 ACCOUNT_LIST_COLLECTION = 'accounts'.freeze
 
-FunctionsFramework.http :update_cartoon_list do |_request|
+FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   require 'httparty'
   require 'nokogiri'
   require 'google/cloud/firestore'
@@ -90,8 +90,6 @@ FunctionsFramework.http :update_cartoon_list do |_request|
   else
     logger.info 'no updated cartoons'
   end
-
-  'ok'
 end
 
 FunctionsFramework.cloud_event :cartoon_update do |event|
