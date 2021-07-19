@@ -13,4 +13,4 @@ jobs:
         run: bundle install
       - name: Test
         run: |
-          gcloud --help
+          gcloud functions deploy update_cartoon_list --region=asia-southeast2 --runtime=ruby27 --project=niceoppai-notifier --trigger-topic=update_cartoon_list
