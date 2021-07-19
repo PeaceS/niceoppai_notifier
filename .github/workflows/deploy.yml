@@ -11,6 +11,24 @@ jobs:
           ruby-version: 2.6
       - name: Install dependencies
         run: bundle install
-      - name: Test
-        run: |
-          gcloud functions deploy update_cartoon_list --region=asia-southeast2 --runtime=ruby27 --project=niceoppai-notifier --trigger-topic=update_cartoon_list
+      # - name: Test
+      #   run: |
+      #     gcloud functions deploy update_cartoon_list --region=asia-southeast2 --runtime=ruby27 --project=niceoppai-notifier --trigger-topic=update_cartoon_list
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Use gcloud CLI
+        run: gcloud info
+      - id: deploy
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          name: update_cartoon_list
+          region: asia-southeast2
+          runtime: ruby27
+          project_id: niceoppai-notifier
+          event_trigger_type: topic
+          event_trigger_resource: update_cartoon_list
