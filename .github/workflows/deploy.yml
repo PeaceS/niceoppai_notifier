@@ -1,0 +1,12 @@
+name: Deploy
+on: [push]
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Buddle
+        run: bundle
+      - name: Test
+        run: |
+          gcloud --help
+      - run: echo "🎉 T
