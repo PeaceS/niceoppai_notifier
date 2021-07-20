@@ -1,0 +1,49 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
+        with:
+          ruby-version: 2.6
+      - name: Install dependencies
+        run: bundle install
+      - name: Create firestore.json
+        run: |
+          mkdir keys
+          echo $FIRESTORE_KEY > keys/firestore.json
+          cat keys/firestore.json
+        env:
+          FIRESTORE_KEY: ${{ secrets.GCP_FIRESTORE_KEY }}
+      - name: Deploy `cartoons_list_update` function
+        id: deploy-function-1
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          name: cartoons_list_update
+          region: asia-southeast2
+          runtime: ruby27
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          event_trigger_type: google.pubsub.topic.publish
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/update_cartoon_list
+          event_trigger_service: pubsub.googleapis.com
+      - name: Deploy `cartoon_update` function
+        id: deploy-function-2
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          name: cartoon_update
+          region: asia-southeast2
+          runtime: ruby27
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          event_trigger_type: providers/cloud.firestore/eventTypes/document.update
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/databases/(default)/documents/cartoons/*

@@ -58,7 +58,7 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
     ]
   end
 
-  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/niceoppai-notifier-bea93adf3021.json'
+  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/firestore.json'
 
   logger.info "total of #{cartoon_data.size} cartoons in the list"
 
@@ -108,7 +108,7 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
   message = "[#{cartoon_name}] #{old_chapter} -> #{new_chapter}"
   logger.info message
 
-  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/niceoppai-notifier-bea93adf3021.json'
+  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/firestore.json'
 
   subscribers = updated['subscribers']['arrayValue']['values'].map(&:values).flatten
 
