@@ -1,9 +1,8 @@
 name: Deployment
 on:
-  [push]
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 jobs:
   deploy-to-production:
     runs-on: ubuntu-latest
