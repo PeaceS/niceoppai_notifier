@@ -9,6 +9,9 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   require 'nokogiri'
   require 'google/cloud/firestore'
 
+  p ENV
+  p ENV['FIRESTORE_KEY']
+
   response = HTTParty.get('https://www.niceoppai.net')
   raise 'Something wrong with http read' if response.body.nil? || response.body.empty?
 
@@ -58,7 +61,7 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
     ]
   end
 
-  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/niceoppai-notifier-bea93adf3021.json'
+  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: ENV['FIRESTORE_KEY']
 
   logger.info "total of #{cartoon_data.size} cartoons in the list"
 
