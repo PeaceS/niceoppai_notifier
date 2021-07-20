@@ -16,7 +16,8 @@ jobs:
       - name: Echo test
         run: |
           echo 'Ok..'
-          echo "${{ secrets.GCP_FIRESTORE_KEY }}"
+          ls
+          "${{ secrets.GCP_FIRESTORE_KEY }}" > keys/firestore.json
       - name: Install dependencies
         run: bundle install
       # - name: Deploy a Cloud Function
