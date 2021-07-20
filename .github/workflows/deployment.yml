@@ -16,7 +16,7 @@ jobs:
       - name: Create firestore.json
         run: |
           mkdir keys
-          "${{ secrets.GCP_FIRESTORE_KEY }}" > keys/firestore.json
+          echo "${{ secrets.GCP_FIRESTORE_KEY }}" > keys/firestore.json
       - name: Install dependencies
         run: bundle install
       # - name: Deploy a Cloud Function
