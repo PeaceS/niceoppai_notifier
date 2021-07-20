@@ -8,17 +8,13 @@ Google Cloud Functions (serverless) that help notify any update cartoon on [nice
 - [x] Store data on Google Firestore
 - [x] Line notify
 - [ ] CI - rubocop, lint
-- [ ] CD - Github Actions
-- [ ] Front end !!!
+- [x] CD - Github Actions
 
-## Deploy
+## Deployment
 
-Manually, for now
-
-- cartoons_list_update: `gcloud functions deploy cartoons_list_update --region=asia-southeast2 --runtime=ruby27 --project=niceoppai-notifier --trigger-topic=update_cartoon_list`
-- cartoon_update: `gcloud functions deploy cartoon_update --region=asia-southeast2 --runtime=ruby27 --project=niceoppai-notifier --trigger-event=providers/cloud.firestore/eventTypes/document.update --trigger-resource="projects/niceoppai-notifier/databases/(default)/documents/cartoons/{cartoon_name}"`
+Continuous Deployment by Github Actions, deploy directly to Google Cloud Platform
 
 ## TODO
 
 - Setup STG environment
-- CI/CD
+- CI
