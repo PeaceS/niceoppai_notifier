@@ -14,7 +14,9 @@ jobs:
         with:
           ruby-version: 2.6
       - name: Echo test
-        run: echo ${{ secrets.GCP_FIRESTORE_KEY }}
+        run: |
+          echo 'Ok..'
+          echo secrets.GCP_FIRESTORE_KEY
       - name: Install dependencies
         run: bundle install
       # - name: Deploy a Cloud Function
