@@ -19,15 +19,15 @@ jobs:
           echo "${{ secrets.GCP_FIRESTORE_KEY }}" > keys/firestore.json
       - name: Install dependencies
         run: bundle install
-      # - name: Deploy a Cloud Function
-      #   id: deploy-function
-      #   uses: google-github-actions/deploy-cloud-functions@main
-      #   with:
-      #     credentials: ${{ secrets.GCP_SA_KEY }}
-      #     name: cartoons_list_update
-      #     region: asia-southeast2
-      #     runtime: ruby27
-      #     project_id: ${{ secrets.GCP_PROJECT_ID }}
-      #     event_trigger_type: google.pubsub.topic.publish
-      #     event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/update_cartoon_list
-      #     event_trigger_service: pubsub.googleapis.com
+      - name: Deploy a Cloud Function
+        id: deploy-function
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          name: cartoons_list_update
+          region: asia-southeast2
+          runtime: ruby27
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          event_trigger_type: google.pubsub.topic.publish
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/update_cartoon_list
+          event_trigger_service: pubsub.googleapis.com
