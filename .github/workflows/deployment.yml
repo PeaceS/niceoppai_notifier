@@ -1,0 +1,28 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
+        with:
+          ruby-version: 2.6
+      - name: Install dependencies
+        run: bundle install
+      - name: Deploy a Cloud Function
+        id: deploy-function
+        uses: google-github-actions/deploy-cloud-functions@v0.1.0
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          name: cartoons_list_update
+          region: asia-southeast2
+          runtime: ruby27
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          event_trigger_type: google.pubsub.topic.publish
+          event_trigger_resource: projects/${{ secrets.GCP_PROJECT_ID }}/topics/update_cartoon_list
+          event_trigger_service: pubsub.googleapis.com
