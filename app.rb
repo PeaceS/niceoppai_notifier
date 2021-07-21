@@ -1,8 +1,18 @@
+# frozen_string_literal: true
+
+# This file contains Google Cloud Functions
+# - cartoons_list_update:
+#   Fetch list of cartoon update, and check that each need to update to db or not
+#   Trigger by Google Cloud Scheduler, cron job on every hour
+# - cartoon_update
+#   Check on every cartoon update that it needs to notify to any subscriber or not
+#   Trigger by Google Firestore update
+
 require 'functions_framework'
 
-PROJECT_ID = 'niceoppai-notifier'.freeze
-CARTOON_LIST_COLLECTION = 'cartoons'.freeze
-ACCOUNT_LIST_COLLECTION = 'accounts'.freeze
+PROJECT_ID = 'niceoppai-notifier'
+CARTOON_LIST_COLLECTION = 'cartoons'
+ACCOUNT_LIST_COLLECTION = 'accounts'
 
 FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   require 'httparty'
@@ -12,10 +22,10 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   response = HTTParty.get('https://www.niceoppai.net')
   raise 'Something wrong with http read' if response.body.nil? || response.body.empty?
 
-  html_object = Nokogiri::HTML(response.body)
+  html_objects = Nokogiri::HTML(response.body)
 
-  html_object = [
-    html_object,
+  html_objects = [
+    html_objects,
     { 'lang' => 'en-US' },
     { 'body' => nil },
     { 'class' => 'wrap' },
@@ -30,7 +40,7 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
     find_by(object: object, type: node.first[0], value: node.first[1])
   end
 
-  html_objects = loop_by(object: html_object, type: 'class', value: 'row')
+  html_objects = loop_by(object: html_objects, type: 'class', value: 'row')
 
   cartoon_data = html_objects.map do |html_object|
     html_object = find_by(object: html_object, type: 'class', value: 'det')
@@ -42,13 +52,18 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
       html_object,
       { 'ul' => nil },
       { 'li' => nil },
-      { 'a' => nil },
+      { 'a' => nil }
     ].reduce do |object, node|
       find_by(object: object, type: node.first[0], value: node.first[1])
     end
 
     chapter = html_object.attributes['href'].value.split('/').last
-    chapter, lang = (Float chapter rescue chapter.split('-'))
+    chapter, lang = begin
+      Float chapter
+    rescue _
+      chapter.split('-')
+    end
+
     [
       name,
       name_object.attributes['href'].value,
@@ -70,20 +85,20 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   end
 
   updated_list = cartoon_data.zip(latest_chapters).map do |data, latest_chapter|
-    next if latest_chapter && latest_chapter.to_f == data[2].to_f
+    next if latest_chapter && (latest_chapter.to_f - data[2].to_f).abs < Float::EPSILON
 
     doc = firestore.doc(format('%<collection>s/%<name>s', collection: CARTOON_LIST_COLLECTION, name: data[0]))
     doc.set({
-      link: data[1],
-      latest_chapter: data[2],
-      latest_link: data[3],
-      language: data[4] || 'TH'
-    }, merge: true)
+              link: data[1],
+              latest_chapter: data[2],
+              latest_link: data[3],
+              language: data[4] || 'TH'
+            }, merge: true)
 
     data[0]
   end.compact
 
-  unless updated_list.empty?
+  if updated_list.present?
     logger.info "updated #{updated_list.size} cartoons"
     logger.info 'updated list:'
     updated_list.each { |cartoon| logger.info cartoon }
@@ -102,7 +117,7 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
   new_chapter = updated['latest_chapter'].first.last
   old_chapter = payload['oldValue']['fields']['latest_chapter'].first.last
 
-  return unless old_chapter != new_chapter
+  break unless old_chapter != new_chapter
 
   cartoon_name = payload['value']['name'].split('/').last
   message = "[#{cartoon_name}] #{old_chapter} -> #{new_chapter}"
@@ -124,7 +139,7 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
     Line::Notify::Client.message(token: token, message: message)
   end
 
-rescue NoMethodError => _
+rescue NoMethodError => _e
   logger.info 'No subscribers list'
 end
 
