@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file contains Google Cloud Functions
 # - cartoons_list_update:
 #   Fetch list of cartoon update, and check that each need to update to db or not
