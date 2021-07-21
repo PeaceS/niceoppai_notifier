@@ -1,0 +1,17 @@
+name: Spec
+on: [pull_request]
+jobs:
+  minitest:
+    name: minitest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - name: Run tests
+        run: |
+          ruby -Ilib:test test/*

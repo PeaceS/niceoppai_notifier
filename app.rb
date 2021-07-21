@@ -98,7 +98,7 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
     data[0]
   end.compact
 
-  if updated_list.present?
+  if !updated_list.empty?
     logger.info "updated #{updated_list.size} cartoons"
     logger.info 'updated list:'
     updated_list.each { |cartoon| logger.info cartoon }
