@@ -16,4 +16,5 @@ jobs:
           rubocop_version: gemfile
           rubocop_extensions: rubocop-rails:gemfile rubocop-rspec:gemfile
           github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
-          reporter: github-pr-review
+          reporter: github-pr-check
+          fail_on_error: true
