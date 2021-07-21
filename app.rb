@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file contains Google Cloud Functions
 # - cartoons_list_update:
 #   Fetch list of cartoon update, and check that each need to update to db or not
@@ -117,7 +115,7 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
   new_chapter = updated['latest_chapter'].first.last
   old_chapter = payload['oldValue']['fields']['latest_chapter'].first.last
 
-  return unless old_chapter != new_chapter
+  break unless old_chapter != new_chapter
 
   cartoon_name = payload['value']['name'].split('/').last
   message = "[#{cartoon_name}] #{old_chapter} -> #{new_chapter}"
