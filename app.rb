@@ -117,7 +117,7 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
   new_chapter = updated['latest_chapter'].first.last
   old_chapter = payload['oldValue']['fields']['latest_chapter'].first.last
 
-  break unless old_chapter != new_chapter
+  return unless old_chapter != new_chapter
 
   cartoon_name = payload['value']['name'].split('/').last
   message = "[#{cartoon_name}] #{old_chapter} -> #{new_chapter}"

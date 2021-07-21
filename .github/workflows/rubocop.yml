@@ -2,7 +2,7 @@ name: Review Dog
 on: [pull_request]
 jobs:
   rubocop:
-    name: runner / rubocop
+    name: rubocop
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
