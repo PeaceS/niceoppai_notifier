@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
+require 'functions_framework'
 require 'functions_framework/testing'
-require 'base64'
-require 'httparty'
 require 'webmock/minitest'
 
 describe :cartoons_list_update do
