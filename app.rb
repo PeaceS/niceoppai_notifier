@@ -153,16 +153,6 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
   message = "[#{cartoon_name}] #{old_chapter} -> #{new_chapter}"
   logger.info message
 
-<<<<<<< HEAD
-  firestore = Google::Cloud::Firestore.new project_id: PROJECT_ID, credentials: 'keys/firestore.json'
-
-  subscribers = updated['subscribers']['arrayValue']['values'].map(&:values).flatten
-
-  subscriber_tokens = firestore.transaction do |transaction|
-    subscribers.map do |subscriber|
-      doc = firestore.doc(format('%<collection>s/%<id>s', collection: ACCOUNT_LIST_COLLECTION, id: subscriber))
-      transaction.get(doc).data&.[](:token)
-=======
   firestore =
     Google::Cloud::Firestore.new project_id: PROJECT_ID,
                                  credentials: 'keys/firestore.json'
@@ -183,7 +173,6 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
           )
         transaction.get(doc).data&.[](:token)
       end
->>>>>>> main
     end
 
   message += ", link: #{updated['latest_link'].first.last}"
