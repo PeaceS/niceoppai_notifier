@@ -1,4 +1,4 @@
-name: Spec
+name: spec
 on: [pull_request]
 jobs:
   minitest:
