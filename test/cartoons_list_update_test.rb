@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require 'functions_framework/testing'
-require 'webmock/minitest'
+require './test/test_helper'
 
 describe :cartoons_list_update do
   include FunctionsFramework::Testing
