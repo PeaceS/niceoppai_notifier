@@ -20,7 +20,8 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   require 'google/cloud/firestore'
 
   response = HTTParty.get('https://www.niceoppai.net')
-  raise 'Something wrong with http read' if response.body.nil? || response.body.empty?
+  (response.body.nil? || response.body.empty?) &&
+    raise('Something wrong with http read')
 
   html_objects = Nokogiri.HTML(response.body)
 
