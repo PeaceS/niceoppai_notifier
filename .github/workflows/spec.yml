@@ -14,6 +14,8 @@ jobs:
           bundler-cache: true
       - name: Install dependencies
         run: bundle install
+      - name: Sleep?
+        run: sleep 5
       - name: Run tests
         run: |
           ruby -Ilib:test test/*
