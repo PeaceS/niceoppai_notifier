@@ -22,7 +22,6 @@ describe :cartoons_list_update do
   end
 
   it 'prints a name' do
-    skip 'will come back to this'
     load_temporary 'app.rb' do
       payload = { '@type' => resource_type, 'message' => { 'data' => Base64.encode64('Ruby') } }
       event = make_cloud_event payload, source: source, type: type
