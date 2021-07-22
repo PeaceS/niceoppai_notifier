@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-name: Deployment
-=======
 name: deployment
->>>>>>> main
 on:
   push:
     branches:
