@@ -1,0 +1,6 @@
+inherit_gem:
+  prettier: rubocop.yml
+
+Metrics/BlockLength:
+  Exclude:
+    - "test/**/*"

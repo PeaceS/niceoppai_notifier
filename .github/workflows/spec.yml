@@ -1,0 +1,23 @@
+name: spec
+on: [pull_request]
+jobs:
+  minitest:
+    name: minitest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Install dependencies
+        run: bundle install
+      - name: Check gemfile
+        run: |
+          bundle info minitest
+          bundle info functions_framework
+          bundle info webmock
+      - name: Run tests
+        run: |
+          ruby -Ilib:test test/*

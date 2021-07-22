@@ -1,0 +1,35 @@
+name: lint
+on: [pull_request]
+jobs:
+  prettier:
+    name: prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Install dependencies
+        run: bundle install
+      - name: check
+        run: |
+          bundle exec rbprettier --check '**/*'
+
+  rubocop:
+    name: rubocop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: check
+        uses: reviewdog/action-rubocop@v1
+        with:
+          rubocop_version: gemfile
+          rubocop_extensions: rubocop-rails:gemfile rubocop-rspec:gemfile
+          github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
+          reporter: github-pr-check
+          fail_on_error: true
