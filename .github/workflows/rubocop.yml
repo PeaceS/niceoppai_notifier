@@ -1,4 +1,4 @@
-name: Review Dog
+name: Lint
 on: [pull_request]
 jobs:
   rubocop:
