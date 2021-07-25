@@ -53,7 +53,7 @@ def loop_by(object:, type:, value:)
 end
 
 def body(source)
-  response = HTTParty.get(source, follow_redirects: false)
+  response = HTTParty.get(source)
   (response.body.nil? || response.body.empty?) &&
     raise('Something wrong with http read')
 

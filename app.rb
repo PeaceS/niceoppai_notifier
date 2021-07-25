@@ -14,34 +14,20 @@ PROJECT_ID = 'niceoppai-notifier'
 CARTOON_LIST_COLLECTION = 'cartoons'
 ACCOUNT_LIST_COLLECTION = 'accounts'
 
-FunctionsFramework.cloud_event :cartoons_list_update do |_event|
+FunctionsFramework.cloud_event :cartoons_list_update do |event|
   require 'google/cloud/firestore'
+  require 'json'
+  require 'base64'
   require './lib/html_object'
+
+  # p event.data['message']['data']
+  data = Base64.decode64 event.data['message']['data'] rescue {}
+  data = JSON.parse(data)
 
   cartoon_data =
     cartoon_data(
-      source: 'https://www.niceoppai.net',
-      structure: [
-        { 'lang' => 'en-US' },
-        { 'body' => nil },
-        { 'class' => 'wrap' },
-        { 'id' => 'sct_col_l' },
-        { 'id' => 'sct_wid_bot' },
-        { 'ul' => nil },
-        { 'li' => nil },
-        { 'class' => 'con' },
-        { 'class' => 'textwidget' },
-        { 'class' => 'wpm_pag mng_lts_chp grp' },
-        {
-          'class' => 'row',
-          'loop' => [
-            { 'class' => 'det' },
-            { 'ul' => nil, 'name_and_link' => 'a' },
-            { 'li' => nil },
-            { 'a' => nil }
-          ]
-        }
-      ]
+      source: data['source'],
+      structure: data['structure']
     )
   firestore =
     Google::Cloud::Firestore.new project_id: PROJECT_ID,
