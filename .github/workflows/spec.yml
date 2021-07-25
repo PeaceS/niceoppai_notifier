@@ -20,4 +20,4 @@ jobs:
           bundle info webmock
       - name: Run tests
         run: |
-          ruby -Ilib:test test/*
+          rake test

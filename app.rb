@@ -15,69 +15,27 @@ CARTOON_LIST_COLLECTION = 'cartoons'
 ACCOUNT_LIST_COLLECTION = 'accounts'
 
 FunctionsFramework.cloud_event :cartoons_list_update do |_event|
-  require 'httparty'
-  require 'nokogiri'
   require 'google/cloud/firestore'
+  require './lib/html_object'
 
-  response = HTTParty.get('https://www.niceoppai.net')
-  (response.body.nil? || response.body.empty?) &&
-    raise('Something wrong with http read')
-
-  html_objects = Nokogiri.HTML(response.body)
-
-  html_objects =
-    [
-      html_objects,
-      { 'lang' => 'en-US' },
-      { 'body' => nil },
-      { 'class' => 'wrap' },
-      { 'id' => 'sct_col_l' },
-      { 'id' => 'sct_wid_bot' },
-      { 'ul' => nil },
+  cartoon_data = cartoon_data(source: 'https://www.niceoppai.net', structure: [
+    { 'lang' => 'en-US' },
+    { 'body' => nil },
+    { 'class' => 'wrap' },
+    { 'id' => 'sct_col_l' },
+    { 'id' => 'sct_wid_bot' },
+    { 'ul' => nil },
+    { 'li' => nil },
+    { 'class' => 'con' },
+    { 'class' => 'textwidget' },
+    { 'class' => 'wpm_pag mng_lts_chp grp' },
+    { 'class' => 'row', 'loop' => [
+      { 'class' => 'det' },
+      { 'ul' => nil, 'name_and_link' => 'a' },
       { 'li' => nil },
-      { 'class' => 'con' },
-      { 'class' => 'textwidget' },
-      { 'class' => 'wpm_pag mng_lts_chp grp' }
-    ].reduce do |object, node|
-      find_by(object: object, type: node.first[0], value: node.first[1])
-    end
-
-  html_objects = loop_by(object: html_objects, type: 'class', value: 'row')
-
-  cartoon_data =
-    html_objects.map do |html_object|
-      html_object = find_by(object: html_object, type: 'class', value: 'det')
-
-      name_object = find_by(object: html_object, type: 'a')
-      name = name_object.children[0].text.strip
-
-      html_object =
-        [
-          html_object,
-          { 'ul' => nil },
-          { 'li' => nil },
-          { 'a' => nil }
-        ].reduce do |object, node|
-          find_by(object: object, type: node.first[0], value: node.first[1])
-        end
-
-      chapter = html_object.attributes['href'].value.split('/').last
-      chapter, lang =
-        begin
-          Float chapter
-        rescue _
-          chapter.split('-')
-        end
-
-      [
-        name,
-        name_object.attributes['href'].value,
-        chapter,
-        html_object.attributes['href'].value,
-        lang
-      ]
-    end
-
+      { 'a' => nil }
+    ]}
+  ])
   firestore =
     Google::Cloud::Firestore.new project_id: PROJECT_ID,
                                  credentials: 'keys/firestore.json'
@@ -181,16 +139,4 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
   end
 rescue NoMethodError => _e
   logger.info 'No subscribers list'
-end
-
-def find_by(object:, type:, value: nil)
-  if value
-    object.children.find { |data| data.attributes[type]&.value == value }
-  else
-    object.children.find { |data| data.name == type }
-  end
-end
-
-def loop_by(object:, type:, value:)
-  object.children.select { |data| data.attributes[type]&.value == value }
 end

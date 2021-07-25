@@ -10,43 +10,27 @@ describe :cartoons_list_update do
     '//pubsub.googleapis.com/projects/niceoppai-notifier/topics/update_cartoon_list'
   end
   let(:type) { 'google.cloud.pubsub.topic.v1.messagePublished' }
+  let(:event) do
+    payload = {
+      '@type' => resource_type,
+      'message' => {
+        'data' => Base64.encode64('Ruby')
+      }
+    }
+    make_cloud_event(payload, source: source, type: type)
+  end
 
   it 'handle error from niceoppai.net' do
+    skip 'this remove to lib test'
+    WebMock
+      .stub_request(:get, 'https://www.niceoppai.net')
+      .to_return(status: 500)
     load_temporary 'app.rb' do
-      WebMock
-        .stub_request(:get, 'https://www.niceoppai.net')
-        .to_return(status: 500)
-      payload = {
-        '@type' => resource_type,
-        'message' => {
-          'data' => Base64.encode64('Ruby')
-        }
-      }
-      event = make_cloud_event payload, source: source, type: type
       err =
         assert_raises RuntimeError do
           call_event :cartoons_list_update, event
         end
       assert_match 'Something wrong with http read', err.message
-    end
-  end
-
-  it 'prints a name' do
-    skip 'will get back to this'
-    load_temporary 'app.rb' do
-      payload = {
-        '@type' => resource_type,
-        'message' => {
-          'data' => Base64.encode64('Ruby')
-        }
-      }
-      event = make_cloud_event payload, source: source, type: type
-      _out, err =
-        capture_subprocess_io do
-          # Call tested function
-          call_event :cartoons_list_update, event
-        end
-      assert_match(/Hello, Ruby!/, err)
     end
   end
 end
