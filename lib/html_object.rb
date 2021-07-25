@@ -22,8 +22,8 @@ def cartoon_data(source:, structure:)
     name, link = nil
     latest_link =
       ([html_object] + loop_structure).reduce do |object, node|
-        if node['save']
-          name_object = find_by(object: object, type: node['save'][0])
+        if node['name_and_link']
+          name_object = find_by(object: object, type: node['name_and_link'][0])
           name, link = name_and_link(name_object)
         end
 

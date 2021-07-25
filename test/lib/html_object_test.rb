@@ -37,7 +37,7 @@ describe :html_object do
               'class' => 'row',
               'loop' => [
                 { 'class' => 'det' },
-                { 'ul' => nil, 'save' => 'a' },
+                { 'ul' => nil, 'name_and_link' => 'a' },
                 { 'li' => nil },
                 { 'a' => nil }
               ]
