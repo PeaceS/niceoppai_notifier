@@ -33,3 +33,18 @@ jobs:
           github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
           reporter: github-pr-check
           fail_on_error: true
+
+  reek:
+    name: reek
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Install dependencies
+        run: bundle install
+      - name: check
+        run: |
+          bundle exec reek

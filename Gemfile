@@ -11,6 +11,7 @@ gem 'minitest', '5.14.4'
 gem 'mocha', '1.13.0'
 gem 'nokogiri', '~> 1.11.7'
 gem 'prettier', '1.6.1'
+gem 'reek', '6.0.4'
 gem 'rubocop', '1.18.3', require: false
 gem 'webmock', '3.13.0'
 
