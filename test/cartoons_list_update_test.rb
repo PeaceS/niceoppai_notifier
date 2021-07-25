@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require './test/test_helper'
+require './lib/html_object'
 
 describe :cartoons_list_update do
   include FunctionsFramework::Testing
@@ -23,17 +24,32 @@ describe :cartoons_list_update do
     make_cloud_event(payload, source: source, type: type)
   end
 
-  it 'handle error from niceoppai.net' do
-    WebMock
-      .stub_request(:get, 'https://www.niceoppai.net')
-      .to_return(status: 500)
+  it 'send arg to HtmlObject correctly' do
     load_temporary 'app.rb' do
-      err =
-        assert_raises RuntimeError do
-          call_event :cartoons_list_update, event
-        end
-      # assert_send([self, :cartoon_data, 'asds'])
-      # assert_match('Something wrong with http read', err.message)
+      object = mock()
+      object.stubs(:cartoon_data).returns([])
+      HtmlObject.expects(:new).with(source: 'https://www.niceoppai.net', structure: [
+          { 'lang' => 'en-US' },
+          { 'body' => nil },
+          { 'class' => 'wrap' },
+          { 'id' => 'sct_col_l' },
+          { 'id' => 'sct_wid_bot' },
+          { 'ul' => nil },
+          { 'li' => nil },
+          { 'class' => 'con' },
+          { 'class' => 'textwidget' },
+          { 'class' => 'wpm_pag mng_lts_chp grp' },
+          {
+            'class' => 'row',
+            'loop' => [
+              { 'class' => 'det' },
+              { 'ul' => nil, 'name_and_link' => 'a' },
+              { 'li' => nil },
+              { 'a' => nil }
+            ]
+          }
+        ]).returns(object).once
+      call_event :cartoons_list_update, event
     end
   end
 end

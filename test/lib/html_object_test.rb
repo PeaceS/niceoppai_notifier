@@ -10,7 +10,7 @@ describe :html_object do
       .to_return(status: 500)
     err =
       assert_raises RuntimeError do
-        cartoon_data(source: 'https://www.niceoppai.net', structure: [{}])
+        HtmlObject.new(source: 'https://www.niceoppai.net', structure: [{}]).cartoon_data
       end
     assert_match 'Something wrong with http read', err.message
   end
@@ -20,7 +20,7 @@ describe :html_object do
 
     it 'call success' do
       result =
-        cartoon_data(
+        HtmlObject.new(
           source: 'https://www.niceoppai.net',
           structure: [
             { 'lang' => 'en-US' },
@@ -43,7 +43,7 @@ describe :html_object do
               ]
             }
           ]
-        )
+        ).cartoon_data
 
       assert_kind_of(Array, result)
       refute_empty(result)

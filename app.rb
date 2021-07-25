@@ -29,7 +29,14 @@ FunctionsFramework.cloud_event :cartoons_list_update do |event|
   input = JSON.parse(input)
 
   cartoon_data =
-    cartoon_data(source: input['source'], structure: input['structure'])
+    HtmlObject.new(source: input['source'], structure: input['structure'])
+      .cartoon_data
+
+  if cartoon_data.empty?
+    logger.warn 'Cannot found any cartoon list'
+    break
+  end
+
   firestore =
     Google::Cloud::Firestore.new project_id: PROJECT_ID,
                                  credentials: 'keys/firestore.json'
