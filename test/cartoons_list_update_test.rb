@@ -17,14 +17,14 @@ describe :cartoons_list_update do
       'message' => {
         'data' =>
           Base64.encode64(
-            '{"source": "https://www.niceoppai.net", '\
-            '"structure": [{"lang": "en-US"}, {"body": null}, '\
-            '{"class": "wrap"}, {"id": "sct_col_l"}, '\
-            '{"id": "sct_wid_bot"}, {"ul": null}, {"li": null}, '\
-            '{"class": "con"}, {"class": "textwidget"}, '\
-            '{"class": "wpm_pag mng_lts_chp grp"}, {"class": "row", '\
-            '"loop": [{"class": "det"}, {"ul": null, "name_and_link": "a"}, '\
-            '{"li": null}, {"a": null}]}]}'
+            '{"source": "https://www.niceoppai.net", ' \
+              '"structure": [{"lang": "en-US"}, {"body": null}, ' \
+              '{"class": "wrap"}, {"id": "sct_col_l"}, ' \
+              '{"id": "sct_wid_bot"}, {"ul": null}, {"li": null}, ' \
+              '{"class": "con"}, {"class": "textwidget"}, ' \
+              '{"class": "wpm_pag mng_lts_chp grp"}, {"class": "row", ' \
+              '"loop": [{"class": "det"}, {"ul": null, "name_and_link": "a"}, ' \
+              '{"li": null}, {"a": null}]}]}'
           )
       }
     }
