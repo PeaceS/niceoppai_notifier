@@ -18,24 +18,31 @@ FunctionsFramework.cloud_event :cartoons_list_update do |_event|
   require 'google/cloud/firestore'
   require './lib/html_object'
 
-  cartoon_data = cartoon_data(source: 'https://www.niceoppai.net', structure: [
-    { 'lang' => 'en-US' },
-    { 'body' => nil },
-    { 'class' => 'wrap' },
-    { 'id' => 'sct_col_l' },
-    { 'id' => 'sct_wid_bot' },
-    { 'ul' => nil },
-    { 'li' => nil },
-    { 'class' => 'con' },
-    { 'class' => 'textwidget' },
-    { 'class' => 'wpm_pag mng_lts_chp grp' },
-    { 'class' => 'row', 'loop' => [
-      { 'class' => 'det' },
-      { 'ul' => nil, 'name_and_link' => 'a' },
-      { 'li' => nil },
-      { 'a' => nil }
-    ]}
-  ])
+  cartoon_data =
+    cartoon_data(
+      source: 'https://www.niceoppai.net',
+      structure: [
+        { 'lang' => 'en-US' },
+        { 'body' => nil },
+        { 'class' => 'wrap' },
+        { 'id' => 'sct_col_l' },
+        { 'id' => 'sct_wid_bot' },
+        { 'ul' => nil },
+        { 'li' => nil },
+        { 'class' => 'con' },
+        { 'class' => 'textwidget' },
+        { 'class' => 'wpm_pag mng_lts_chp grp' },
+        {
+          'class' => 'row',
+          'loop' => [
+            { 'class' => 'det' },
+            { 'ul' => nil, 'name_and_link' => 'a' },
+            { 'li' => nil },
+            { 'a' => nil }
+          ]
+        }
+      ]
+    )
   firestore =
     Google::Cloud::Firestore.new project_id: PROJECT_ID,
                                  credentials: 'keys/firestore.json'

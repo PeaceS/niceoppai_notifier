@@ -19,24 +19,31 @@ describe :html_object do
     WebMock.allow_net_connect!
 
     it 'call success' do
-      result = cartoon_data(source: 'https://www.niceoppai.net', structure: [
-        { 'lang' => 'en-US' },
-        { 'body' => nil },
-        { 'class' => 'wrap' },
-        { 'id' => 'sct_col_l' },
-        { 'id' => 'sct_wid_bot' },
-        { 'ul' => nil },
-        { 'li' => nil },
-        { 'class' => 'con' },
-        { 'class' => 'textwidget' },
-        { 'class' => 'wpm_pag mng_lts_chp grp' },
-        { 'class' => 'row', 'loop' => [
-          { 'class' => 'det' },
-          { 'ul' => nil, 'save' => 'a' },
-          { 'li' => nil },
-          { 'a' => nil }
-        ]}
-      ])
+      result =
+        cartoon_data(
+          source: 'https://www.niceoppai.net',
+          structure: [
+            { 'lang' => 'en-US' },
+            { 'body' => nil },
+            { 'class' => 'wrap' },
+            { 'id' => 'sct_col_l' },
+            { 'id' => 'sct_wid_bot' },
+            { 'ul' => nil },
+            { 'li' => nil },
+            { 'class' => 'con' },
+            { 'class' => 'textwidget' },
+            { 'class' => 'wpm_pag mng_lts_chp grp' },
+            {
+              'class' => 'row',
+              'loop' => [
+                { 'class' => 'det' },
+                { 'ul' => nil, 'save' => 'a' },
+                { 'li' => nil },
+                { 'a' => nil }
+              ]
+            }
+          ]
+        )
 
       assert_kind_of(Array, result)
       refute_empty(result)
