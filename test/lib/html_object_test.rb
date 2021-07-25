@@ -10,7 +10,8 @@ describe :html_object do
       .to_return(status: 500)
     err =
       assert_raises RuntimeError do
-        HtmlObject.new(source: 'https://www.niceoppai.net', structure: [{}]).cartoon_data
+        HtmlObject.new(source: 'https://www.niceoppai.net', structure: [{}])
+          .cartoon_data
       end
     assert_match 'Something wrong with http read', err.message
   end

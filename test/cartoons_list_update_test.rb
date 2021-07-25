@@ -17,7 +17,14 @@ describe :cartoons_list_update do
       'message' => {
         'data' =>
           Base64.encode64(
-            '{"source": "https://www.niceoppai.net", "structure": [{"lang": "en-US"}, {"body": null}, {"class": "wrap"}, {"id": "sct_col_l"}, {"id": "sct_wid_bot"}, {"ul": null}, {"li": null}, {"class": "con"}, {"class": "textwidget"}, {"class": "wpm_pag mng_lts_chp grp"}, {"class": "row", "loop": [{"class": "det"}, {"ul": null, "name_and_link": "a"}, {"li": null}, {"a": null}]}]}'
+            '{"source": "https://www.niceoppai.net", '\
+            '"structure": [{"lang": "en-US"}, {"body": null}, '\
+            '{"class": "wrap"}, {"id": "sct_col_l"}, '\
+            '{"id": "sct_wid_bot"}, {"ul": null}, {"li": null}, '\
+            '{"class": "con"}, {"class": "textwidget"}, '\
+            '{"class": "wpm_pag mng_lts_chp grp"}, {"class": "row", '\
+            '"loop": [{"class": "det"}, {"ul": null, "name_and_link": "a"}, '\
+            '{"li": null}, {"a": null}]}]}'
           )
       }
     }
@@ -26,29 +33,36 @@ describe :cartoons_list_update do
 
   it 'send arg to HtmlObject correctly' do
     load_temporary 'app.rb' do
-      object = mock()
+      object = mock
       object.stubs(:cartoon_data).returns([])
-      HtmlObject.expects(:new).with(source: 'https://www.niceoppai.net', structure: [
-          { 'lang' => 'en-US' },
-          { 'body' => nil },
-          { 'class' => 'wrap' },
-          { 'id' => 'sct_col_l' },
-          { 'id' => 'sct_wid_bot' },
-          { 'ul' => nil },
-          { 'li' => nil },
-          { 'class' => 'con' },
-          { 'class' => 'textwidget' },
-          { 'class' => 'wpm_pag mng_lts_chp grp' },
-          {
-            'class' => 'row',
-            'loop' => [
-              { 'class' => 'det' },
-              { 'ul' => nil, 'name_and_link' => 'a' },
-              { 'li' => nil },
-              { 'a' => nil }
-            ]
-          }
-        ]).returns(object).once
+      HtmlObject
+        .expects(:new)
+        .with(
+          source: 'https://www.niceoppai.net',
+          structure: [
+            { 'lang' => 'en-US' },
+            { 'body' => nil },
+            { 'class' => 'wrap' },
+            { 'id' => 'sct_col_l' },
+            { 'id' => 'sct_wid_bot' },
+            { 'ul' => nil },
+            { 'li' => nil },
+            { 'class' => 'con' },
+            { 'class' => 'textwidget' },
+            { 'class' => 'wpm_pag mng_lts_chp grp' },
+            {
+              'class' => 'row',
+              'loop' => [
+                { 'class' => 'det' },
+                { 'ul' => nil, 'name_and_link' => 'a' },
+                { 'li' => nil },
+                { 'a' => nil }
+              ]
+            }
+          ]
+        )
+        .returns(object)
+        .once
       call_event :cartoons_list_update, event
     end
   end
