@@ -20,17 +20,16 @@ FunctionsFramework.cloud_event :cartoons_list_update do |event|
   require 'base64'
   require './lib/html_object'
 
-  # p event.data['message']['data']
-  data =
+  input =
     begin
       Base64.decode64 event.data['message']['data']
     rescue StandardError
       {}
     end
-  data = JSON.parse(data)
+  input = JSON.parse(input)
 
   cartoon_data =
-    cartoon_data(source: data['source'], structure: data['structure'])
+    cartoon_data(source: input['source'], structure: input['structure'])
   firestore =
     Google::Cloud::Firestore.new project_id: PROJECT_ID,
                                  credentials: 'keys/firestore.json'
