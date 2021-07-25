@@ -43,8 +43,10 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: Install dependencies
-        run: bundle install
       - name: check
-        run: |
-          bundle exec reek
+        uses: reviewdog/action-reek@v1
+        with:
+          reek_version: gemfile
+          github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
+          reporter: github-pr-check
+          fail_on_error: true
