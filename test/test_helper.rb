@@ -3,3 +3,4 @@
 require 'minitest/autorun'
 require 'functions_framework/testing'
 require 'webmock/minitest'
+require 'mocha/minitest'
