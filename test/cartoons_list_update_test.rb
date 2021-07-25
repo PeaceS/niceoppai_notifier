@@ -31,6 +31,19 @@ describe :cartoons_list_update do
     make_cloud_event(payload, source: source, type: type)
   end
 
+  it 'handle cannot reach error' do
+    load_temporary 'app.rb' do
+      WebMock
+        .stub_request(:get, 'https://www.niceoppai.net')
+        .to_return(status: 500)
+      err =
+        assert_raises RuntimeError do
+          call_event :cartoons_list_update, event
+        end
+      assert_match 'Something wrong with http read', err.message
+    end
+  end
+
   it 'send arg to HtmlObject correctly' do
     load_temporary 'app.rb' do
       object = mock
