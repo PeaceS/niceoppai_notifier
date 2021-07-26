@@ -58,9 +58,7 @@ describe :html_object do
 
       (0..4).each { |index| refute_nil(result.sample[index]) }
 
-      (2..4).each do |index|
-        assert(HTTParty.get(result.sample[index]).ok?)
-      end
+      (2..4).each { |index| assert(HTTParty.get(result.sample[index]).ok?) }
 
       sample_result = result.sample
       assert_kind_of(Float, sample_result[1]) if sample_result[5].nil?
