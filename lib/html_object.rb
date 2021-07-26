@@ -49,7 +49,7 @@ class HtmlObject
 
       chapter, lang = chapter_and_lang(latest_link.split('/').last)
 
-      [name, link, chapter, latest_link, lang, thumbnail_link]
+      [name, chapter, link, latest_link, thumbnail_link, lang]
     end
   end
 

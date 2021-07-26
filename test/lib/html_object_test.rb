@@ -2,6 +2,7 @@
 
 require './lib/html_object'
 require './test/test_helper'
+require 'httparty'
 
 describe :html_object do
   it 'handle error from niceoppai.net' do
@@ -55,13 +56,16 @@ describe :html_object do
       assert_kind_of(Array, result)
       refute_empty(result)
 
-      refute_nil(result.sample[0])
-      refute_nil(result.sample[1])
-      refute_nil(result.sample[3])
-      refute_nil(result.sample[5])
+      (0..4).each do |index|
+        refute_nil(result.sample[index])
+      end
+
+      (2..4).each do |index|
+        assert(HTTParty.get(result.sample[index]).code == 200)
+      end
 
       sample_result = result.sample
-      assert_kind_of(Float, sample_result[2]) if sample_result[4].nil?
+      assert_kind_of(Float, sample_result[1]) if sample_result[5].nil?
     end
   end
 end
