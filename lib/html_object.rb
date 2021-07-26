@@ -41,11 +41,11 @@ class HtmlObject
         ].value
 
       thumbnail_link =
-      ([html_object] + @loop_thumbnail).reduce do |object, node|
-        find_by(object: object, type: node.first[0], value: node.first[1])
-      end.attributes[
-        'src'
-      ].value.gsub('36x0.jpg', '350x0.jpg')
+        ([html_object] + @loop_thumbnail).reduce do |object, node|
+          find_by(object: object, type: node.first[0], value: node.first[1])
+        end.attributes[
+          'src'
+        ].value.gsub('36x0.jpg', '350x0.jpg')
 
       chapter, lang = chapter_and_lang(latest_link.split('/').last)
 

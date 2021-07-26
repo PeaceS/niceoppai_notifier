@@ -43,7 +43,7 @@ describe :html_object do
                 { 'a' => nil }
               ],
               'loop_thumbnail' => [
-                { 'class' => 'cvr'},
+                { 'class' => 'cvr' },
                 { 'class' => 'img_wrp' },
                 { 'a' => nil },
                 { 'img' => nil }
