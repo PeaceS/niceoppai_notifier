@@ -24,7 +24,8 @@ describe :cartoons_list_update do
               '{"class": "con"}, {"class": "textwidget"}, ' \
               '{"class": "wpm_pag mng_lts_chp grp"}, {"class": "row", ' \
               '"loop": [{"class": "det"}, {"ul": null, "name_and_link": "a"}, ' \
-              '{"li": null}, {"a": null}]}]}'
+              '{"li": null}, {"a": null}], "loop_thumbnail": [{"class": "cvr"}, ' \
+              '{"class": "img_wrp"}, {"a": null}, {"img": null}]}]}'
           )
       }
     }
@@ -70,6 +71,12 @@ describe :cartoons_list_update do
                 { 'ul' => nil, 'name_and_link' => 'a' },
                 { 'li' => nil },
                 { 'a' => nil }
+              ],
+              'loop_thumbnail' => [
+                { 'class' => 'cvr' },
+                { 'class' => 'img_wrp' },
+                { 'a' => nil },
+                { 'img' => nil }
               ]
             }
           ]
