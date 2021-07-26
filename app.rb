@@ -98,7 +98,7 @@ FunctionsFramework.cloud_event :cartoons_list_update do |event|
 end
 
 FunctionsFramework.cloud_event :cartoon_update do |event|
-  require 'line-notify-client'
+  require 'line_notify'
   require 'google/cloud/firestore'
 
   payload = event.data
@@ -135,9 +135,16 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
       end
     end
 
+  thumbnail_link = payload['oldValue']['fields']['thumbnail_link'].first.last
   message += ", link: #{updated['latest_link'].first.last}"
   subscriber_tokens.each do |token|
-    Line::Notify::Client.message(token: token, message: message)
+    line_notify = LineNotify.new(token)
+    options = {
+      message: message,
+      imageThumbnail: thumbnail_link,
+      imageFullsize: thumbnail_link
+    }
+    line_notify.ping(options)
   end
 rescue NoMethodError => _e
   logger.info 'No subscribers list'
