@@ -59,7 +59,7 @@ describe :html_object do
       (0..4).each { |index| refute_nil(result.sample[index]) }
 
       (2..4).each do |index|
-        assert(HTTParty.get(result.sample[index]).code == 200)
+        assert(HTTParty.get(result.sample[index]).ok?)
       end
 
       sample_result = result.sample
