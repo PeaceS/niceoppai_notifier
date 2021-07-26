@@ -47,7 +47,11 @@ class HtmlObject
 
   def find_by(object:, type:, value: nil)
     object.children.find do |data|
-      value && (data.attributes[type]&.value == value) || data.name == type
+      if value
+        data.attributes[type]&.value == value
+      else
+        data.name == type
+      end
     end
   end
 
@@ -57,8 +61,7 @@ class HtmlObject
 
   def body(source)
     response_body = HTTParty.get(source).body
-    (!response_body || response_body.empty?) &&
-      raise('Something wrong with http read')
+    response_body&.empty? && raise('Something wrong with http read')
 
     Nokogiri.HTML(response_body)
   end
