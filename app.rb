@@ -75,10 +75,11 @@ FunctionsFramework.cloud_event :cartoons_list_update do |event|
           )
         doc.set(
           {
-            link: data[1],
-            latest_chapter: data[2],
+            latest_chapter: data[1],
+            link: data[2],
             latest_link: data[3],
-            language: data[4] || 'TH'
+            thumbnail_link: data[4],
+            language: data[5] || 'TH'
           },
           merge: true
         )
