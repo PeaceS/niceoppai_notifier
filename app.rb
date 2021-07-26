@@ -163,14 +163,14 @@ FunctionsFramework.http :subscribe_cartoon do |request|
         name: data['cartoon_name']
       )
     )
-  subscribers = firestore.transaction do |transaction|
-    transaction.get(doc).data&.[](:subscribers)
-  end.to_a.to_set
+  subscribers =
+    firestore
+      .transaction { |transaction| transaction.get(doc).data&.[](:subscribers) }
+      .to_a
+      .to_set
 
   doc.set(
-    {
-      subscribers: (subscribers << data['account_id']).to_a
-    },
+    { subscribers: (subscribers << data['account_id']).to_a },
     merge: true
   )
 
