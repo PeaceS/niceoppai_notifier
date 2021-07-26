@@ -47,11 +47,7 @@ class HtmlObject
 
   def find_by(object:, type:, value: nil)
     object.children.find do |data|
-      if value
-        data.attributes[type]&.value == value
-      else
-        data.name == type
-      end
+      value ? data.attributes[type]&.value == value : data.name == type
     end
   end
 
