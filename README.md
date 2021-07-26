@@ -7,7 +7,7 @@ Google Cloud Functions (serverless) that help notify any update cartoon on [nice
 - [x] Run on Google Cloud Platform (required [functions_framework](https://github.com/GoogleCloudPlatform/functions-framework-ruby) to deploy)
 - [x] Store data on Google Firestore
 - [x] Line notify
-- [ ] CI - rubocop, lint
+- [x] CI - rubocop, brakeman, misspell, prettier, reek
 - [x] CD - Github Actions
 
 ## Deployment
@@ -17,4 +17,3 @@ Continuous Deployment by Github Actions, deploy directly to Google Cloud Platfor
 ## TODO
 
 - Setup STG environment
-- CI

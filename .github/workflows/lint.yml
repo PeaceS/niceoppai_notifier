@@ -16,6 +16,34 @@ jobs:
         run: |
           bundle exec rbprettier --check '**/*'
 
+  misspell:
+    name: misspell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code.
+        uses: actions/checkout@v2
+      - name: check
+        uses: reviewdog/action-misspell@v1
+        with:
+          github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
+          locale: "US"
+          reporter: github-pr-check
+          fail_on_error: true
+
+  brakeman:
+    name: brakeman
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: check
+        uses: reviewdog/action-brakeman@v1
+        with:
+          brakeman_version: 4.8.2
+          github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
+          reporter: github-pr-check
+          fail_on_error: true
+
   rubocop:
     name: rubocop
     runs-on: ubuntu-latest
@@ -30,6 +58,23 @@ jobs:
         with:
           rubocop_version: gemfile
           rubocop_extensions: rubocop-rails:gemfile rubocop-rspec:gemfile
+          github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
+          reporter: github-pr-check
+          fail_on_error: true
+
+  reek:
+    name: reek
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: check
+        uses: reviewdog/action-reek@v1
+        with:
+          reek_version: gemfile
           github_token: ${{ secrets.TOKEN_FOR_RUBOCOP }}
           reporter: github-pr-check
           fail_on_error: true
