@@ -41,6 +41,12 @@ describe :html_object do
                 { 'ul' => nil, 'name_and_link' => 'a' },
                 { 'li' => nil },
                 { 'a' => nil }
+              ],
+              'loop_thumbnail' => [
+                { 'class' => 'cvr'},
+                { 'class' => 'img_wrp' },
+                { 'a' => nil },
+                { 'img' => nil }
               ]
             }
           ]
@@ -52,6 +58,7 @@ describe :html_object do
       refute_nil(result.sample[0])
       refute_nil(result.sample[1])
       refute_nil(result.sample[3])
+      refute_nil(result.sample[5])
 
       sample_result = result.sample
       assert_kind_of(Float, sample_result[2]) if sample_result[4].nil?

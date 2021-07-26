@@ -78,7 +78,8 @@ FunctionsFramework.cloud_event :cartoons_list_update do |event|
             link: data[1],
             latest_chapter: data[2],
             latest_link: data[3],
-            language: data[4] || 'TH'
+            language: data[4] || 'TH',
+            thumbnail_link: data[5]
           },
           merge: true
         )

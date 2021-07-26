@@ -7,7 +7,10 @@ class HtmlObject
   def initialize(source:, structure:)
     @body_object = body(source)
     @structure = structure
-    @loop_structure = structure.find { |data| data['loop'] }['loop']
+
+    start_of_loop = structure.find { |data| data['loop'] }
+    @loop_structure = start_of_loop['loop']
+    @loop_thumbnail = start_of_loop['loop_thumbnail']
   end
 
   def cartoon_data
@@ -37,9 +40,16 @@ class HtmlObject
           'href'
         ].value
 
+      thumbnail_link =
+      ([html_object] + @loop_thumbnail).reduce do |object, node|
+        find_by(object: object, type: node.first[0], value: node.first[1])
+      end.attributes[
+        'src'
+      ].value.gsub('36x0.jpg', '350x0.jpg')
+
       chapter, lang = chapter_and_lang(latest_link.split('/').last)
 
-      [name, link, chapter, latest_link, lang]
+      [name, link, chapter, latest_link, lang, thumbnail_link]
     end
   end
 
