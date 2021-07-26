@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - feature/post-subscribe-cartoon
 jobs:
   deploy-to-production:
     runs-on: ubuntu-latest
