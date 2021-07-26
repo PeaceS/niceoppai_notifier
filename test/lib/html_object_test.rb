@@ -56,9 +56,7 @@ describe :html_object do
       assert_kind_of(Array, result)
       refute_empty(result)
 
-      (0..4).each do |index|
-        refute_nil(result.sample[index])
-      end
+      (0..4).each { |index| refute_nil(result.sample[index]) }
 
       (2..4).each do |index|
         assert(HTTParty.get(result.sample[index]).code == 200)
