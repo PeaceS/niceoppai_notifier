@@ -141,3 +141,38 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
 rescue NoMethodError => _e
   logger.info 'No subscribers list'
 end
+
+FunctionsFramework.http :subscribe_cartoon do |request|
+  require 'json'
+  require 'google/cloud/firestore'
+
+  raise('Bad request') unless request.request_method == 'POST'
+
+  data = JSON.parse(request.body.read.to_s)
+  raise('Bad request') unless data['account_id'] && data['cartoon_name']
+
+  firestore =
+    Google::Cloud::Firestore.new project_id: PROJECT_ID,
+                                 credentials: 'keys/firestore.json'
+
+  doc =
+    firestore.doc(
+      format(
+        '%<collection>s/%<name>s',
+        collection: CARTOON_LIST_COLLECTION,
+        name: data['cartoon_name']
+      )
+    )
+  subscribers = firestore.transaction do |transaction|
+    transaction.get(doc).data&.[](:subscribers)
+  end.to_a.to_set
+
+  doc.set(
+    {
+      subscribers: (subscribers << data['account_id']).to_a
+    },
+    merge: true
+  )
+
+  "`#{data['account_id']}` has been subscribed to `#{data['cartoon_name']}`"
+end
