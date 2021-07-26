@@ -2,6 +2,7 @@
 
 require './lib/html_object'
 require './test/test_helper'
+require 'httparty'
 
 describe :html_object do
   it 'handle error from niceoppai.net' do
@@ -41,6 +42,12 @@ describe :html_object do
                 { 'ul' => nil, 'name_and_link' => 'a' },
                 { 'li' => nil },
                 { 'a' => nil }
+              ],
+              'loop_thumbnail' => [
+                { 'class' => 'cvr' },
+                { 'class' => 'img_wrp' },
+                { 'a' => nil },
+                { 'img' => nil }
               ]
             }
           ]
@@ -49,12 +56,12 @@ describe :html_object do
       assert_kind_of(Array, result)
       refute_empty(result)
 
-      refute_nil(result.sample[0])
-      refute_nil(result.sample[1])
-      refute_nil(result.sample[3])
+      (0..4).each { |index| refute_nil(result.sample[index]) }
+
+      (2..4).each { |index| assert(HTTParty.get(result.sample[index]).ok?) }
 
       sample_result = result.sample
-      assert_kind_of(Float, sample_result[2]) if sample_result[4].nil?
+      assert_kind_of(Float, sample_result[1]) if sample_result[5].nil?
     end
   end
 end
