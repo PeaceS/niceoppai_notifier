@@ -118,7 +118,11 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
                                  credentials: 'keys/firestore.json'
 
   subscribers =
-    updated['subscribers']['arrayValue']['values'].map(&:values).flatten
+    if updated['subscribers']
+      updated['subscribers']['arrayValue']['values'].map(&:values).flatten
+    else
+      []
+    end
 
   subscriber_tokens =
     firestore.transaction do |transaction|
@@ -146,8 +150,6 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
     }
     line_notify.ping(options)
   end
-rescue NoMethodError => _e
-  logger.info 'No subscribers list'
 end
 
 FunctionsFramework.http :subscribe_cartoon do |request|
