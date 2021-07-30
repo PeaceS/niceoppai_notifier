@@ -78,7 +78,7 @@ class HtmlObject
 
   def chapter_and_lang(text)
     Float text
-  rescue _
+  rescue StandardError => _
     text.split('-')
   end
 end
