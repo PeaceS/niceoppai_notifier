@@ -139,7 +139,7 @@ FunctionsFramework.cloud_event :cartoon_update do |event|
       end
     end
 
-  thumbnail_link = payload['oldValue']['fields']['thumbnail_link'].first.last
+  thumbnail_link = payload['oldValue']['fields']['thumbnail_link']&.first&.last
   message += ", link: #{updated['latest_link'].first.last}"
   subscriber_tokens.each do |token|
     line_notify = LineNotify.new(token)
