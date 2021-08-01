@@ -1,0 +1,33 @@
+name: deployment
+on:
+  push:
+    branches:
+      - release/subscribe-cartoon
+jobs:
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
+        with:
+          ruby-version: 2.6
+      - name: Install dependencies
+        run: bundle install
+      - name: Create firestore.json
+        run: |
+          mkdir keys
+          echo $FIRESTORE_KEY > keys/firestore.json
+          cat keys/firestore.json
+        env:
+          FIRESTORE_KEY: ${{ secrets.GCP_FIRESTORE_KEY }}
+      - name: Deploy `subscribe_cartoon` function
+        id: deploy-function
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          name: subscribe_cartoon
+          region: asia-southeast2
+          runtime: ruby27
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: https-access@niceoppai-notifier.iam.gserviceaccount.com
