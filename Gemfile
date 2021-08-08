@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'algolia', '2.1.1'
 gem 'functions_framework', '~> 1.0'
 gem 'google-cloud-firestore', '~> 2.4.1'
 gem 'httparty', '~> 0.18.1'
