@@ -73,7 +73,10 @@ class HtmlObject
   end
 
   def name_and_link(object)
-    [object.children[0].text.strip, object.attributes['href'].value]
+    [
+      object.children[0].text.strip.sub('/', '-'),
+      object.attributes['href'].value
+    ]
   end
 
   def chapter_and_lang(text)
